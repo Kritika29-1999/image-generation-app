@@ -2,6 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 app = FastAPI()
@@ -14,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DEEPAI_API_KEY = "8715588c-32f1-4c98-8b35-0382f330b74d"
+DEEPAI_API_KEY = os.getenv("DEEPAI_API_KEY")
 
 @app.get("/")
 def home():
@@ -25,6 +29,7 @@ class ImageRequest(BaseModel):
 
 @app.post("/generate-image")
 def generate_image(request: ImageRequest):
+    print(f"APIKEY: {DEEPAI_API_KEY}")
     response = requests.post(
         "https://api.deepai.org/api/text2img",
         data={"text": request.prompt},
